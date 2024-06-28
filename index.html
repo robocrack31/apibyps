@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<style>
+/* CSS */
+html {
+  height: 100%;
+  width: 100%;
+}
+</style>
+</head>
+<body>
+
+<script>
+// Function to generate a new key according to the provided format
+function generateCustomKey() {
+    var keyLength = 32; // Length of the key
+    var key = '';
+
+    // Iterate through each character in the key
+    for (var i = 0; i < keyLength; i++) {
+        // Select a random character from 0 to f
+        var randomChar = Math.floor(Math.random() * 16).toString(16);
+        key += randomChar;
+    }
+
+    return key;
+}
+
+// Function to handle the request
+function handleRequest() {
+    // Check if there are no URL parameters
+    var urlParams = new URLSearchParams(window.location.search);
+    var url = urlParams.get('url');
+
+    if (!url) {
+        // Return a fail response if there is no URL
+        var failResponse = {
+            "status": "fail",
+            "error": "No URL Provided."
+        };
+        return { response: JSON.stringify(failResponse), isFail: true }; // Return JSON data in one line and mark it as an error
+    }
+
+    // If there is a URL, generate a new key and change the response
+    var newKey = generateCustomKey(); // Generate a new key
+    var newTime = (Math.random() * 0.9 + 0.1).toFixed(1); // Limit decimal places and ensure time is under 1 second
+    var newResponse = {
+        "status": "success",
+        "key": newKey,
+        "time": newTime // Time under 1 second
+    };
+    return { response: JSON.stringify(newResponse), isFail: false }; // Return JSON data in one line
+}
+
+// Handle the request when the page loads
+window.onload = function() {
+    // Get the response from the handleRequest function
+    var result = handleRequest();
+    var response = result.response;
+    var isFail = result.isFail;
+    
+    // Display the response on the web page
+    var responseContainer = document.createElement('pre');
+    responseContainer.className = isFail ? 'fail-response' : 'response';
+    responseContainer.textContent = response;
+    document.body.appendChild(responseContainer);
+};
+</script>
+
+</body>
+</html>
